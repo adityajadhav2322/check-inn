@@ -9,7 +9,7 @@
             --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             --glass-bg: rgba(255, 255, 255, 0.08);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --primary: #6C63FF; /* Modern Blurple */
+            --primary: #6C63FF;
             --primary-glow: rgba(108, 99, 255, 0.4);
             --text: #ffffff;
             --text-muted: #b2bec3;
@@ -32,6 +32,19 @@
             padding: 20px;
         }
 
+        /* Loading Overlay */
+        #loading {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 999;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
         .card {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -42,228 +55,161 @@
             width: 100%;
             max-width: 420px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+        header { text-align: center; margin-bottom: 25px; }
+        h2 { margin: 0; font-weight: 700; font-size: 24px; background: linear-gradient(to right, #fff, #a5a5a5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+        .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 5px; font-weight: 500; }
 
-        h2 {
-            margin: 0;
-            font-weight: 700;
-            font-size: 24px;
-            background: linear-gradient(to right, #fff, #a5a5a5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        .subtitle {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 5px;
-            font-weight: 500;
-        }
-
-        label {
-            display: block;
-            margin: 15px 0 6px;
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-
-        .input-group { position: relative; }
+        label { display: block; margin: 15px 0 6px; font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
 
         input, select {
-            width: 100%;
-            padding: 14px 16px;
-            background: var(--input-bg);
-            border: 1px solid transparent;
-            border-radius: var(--radius);
-            color: #fff;
-            font-size: 16px;
+            width: 100%; padding: 14px 16px; background: var(--input-bg);
+            border: 1px solid transparent; border-radius: var(--radius);
+            color: #fff; font-size: 16px; outline: none; appearance: none;
             transition: all 0.2s ease;
-            outline: none;
-            appearance: none;
         }
-
-        input:focus, select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.15);
-            background: #25252b;
-        }
+        input:focus, select:focus { border-color: var(--primary); background: #25252b; }
 
         .select-wrapper { position: relative; }
         .select-wrapper::after {
-            content: '';
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            width: 10px;
-            height: 6px;
-            background-color: var(--text-muted);
-            clip-path: polygon(100% 0%, 0 0%, 50% 100%);
-            transform: translateY(-50%);
-            pointer-events: none;
+            content: ''; position: absolute; right: 16px; top: 50%;
+            width: 10px; height: 6px; background-color: var(--text-muted);
+            clip-path: polygon(100% 0%, 0 0%, 50% 100%); transform: translateY(-50%); pointer-events: none;
         }
 
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
         .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 16px;
-            border-radius: var(--radius);
-            font-size: 17px;
-            font-weight: 700;
-            margin-top: 30px;
-            cursor: pointer;
+            background: var(--primary); color: white; border: none; width: 100%;
+            padding: 16px; border-radius: var(--radius); font-size: 17px;
+            font-weight: 700; margin-top: 30px; cursor: pointer;
             box-shadow: 0 8px 20px var(--primary-glow);
-            transition: transform 0.1s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-
-        .btn:active {
-            transform: scale(0.97);
-            box-shadow: 0 4px 10px var(--primary-glow);
-        }
-
+        .btn:active { transform: scale(0.97); }
         .btn svg { width: 20px; height: 20px; }
 
         option { background: #1e1e24; color: white; }
-        
-        .error-shake {
-            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-            border-color: #ff4757 !important;
-        }
+        .error-shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: #ff4757 !important; }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
 <body>
 
+<div id="loading"><div class="spinner"></div></div>
+
 <div class="card">
     <header>
         <h2>Check-In Pro</h2>
-        <div class="subtitle">Quick Guest Registration</div>
+        <div class="subtitle">Database Connected 🟢</div>
     </header>
 
-    <label>Guest Name</label>
-    <div class="input-group">
-        <input type="text" id="guestName" placeholder="e.g. Mr. Sharma" autocomplete="off">
-    </div>
+    <form name="submit-to-google-sheet">
+        
+        <label>Guest Name</label>
+        <div class="input-group">
+            <input type="text" name="Guest Name" id="guestName" placeholder="e.g. Mr. Sharma" autocomplete="off" required>
+        </div>
 
-    <label>Room Allocation</label>
-    <div class="select-wrapper">
-        <select id="room">
-            <option value="" disabled selected>Select Room</option>
-            <optgroup label="S Series (Ground)">
-                <option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option>
-                <option value="S4">S4</option><option value="S5">S5</option><option value="S6">S6</option>
-                <option value="S7">S7</option><option value="S8">S8</option><option value="S9">S9</option>
-            </optgroup>
-            <optgroup label="D Series">
-                <option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option>
-            </optgroup>
-            <optgroup label="C Series">
-                <option value="C1">C1</option><option value="C2">C2</option><option value="C3">C3</option>
-                <option value="C4">C4</option><option value="C5">C5</option><option value="C6">C6</option>
-                <option value="C7">C7</option><option value="C8">C8</option><option value="C9">C9</option>
-            </optgroup>
-            <optgroup label="1st Floor">
-                <option value="101">101</option><option value="102">102</option><option value="103">103</option><option value="104">104</option>
-            </optgroup>
-            <optgroup label="2nd Floor">
-                <option value="201">201</option><option value="202">202</option><option value="203">203</option><option value="204">204</option>
-            </optgroup>
-        </select>
-    </div>
+        <label>Room Allocation</label>
+        <div class="select-wrapper">
+            <select name="Room" id="room" required>
+                <option value="" disabled selected>Select Room</option>
+                <optgroup label="S Series">
+                    <option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option>
+                    <option value="S4">S4</option><option value="S5">S5</option><option value="S6">S6</option>
+                    <option value="S7">S7</option><option value="S8">S8</option><option value="S9">S9</option>
+                </optgroup>
+                <optgroup label="D Series">
+                    <option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option>
+                </optgroup>
+                <optgroup label="C Series">
+                    <option value="C1">C1</option><option value="C2">C2</option><option value="C3">C3</option>
+                    <option value="C4">C4</option><option value="C5">C5</option><option value="C6">C6</option>
+                    <option value="C7">C7</option><option value="C8">C8</option><option value="C9">C9</option>
+                </optgroup>
+                <optgroup label="1st Floor">
+                    <option value="101">101</option><option value="102">102</option><option value="103">103</option><option value="104">104</option>
+                </optgroup>
+                <optgroup label="2nd Floor">
+                    <option value="201">201</option><option value="202">202</option><option value="203">203</option><option value="204">204</option>
+                </optgroup>
+            </select>
+        </div>
 
-    <label>Checkout Date & Time</label>
-    <input type="datetime-local" id="checkout">
+        <label>Checkout Date & Time</label>
+        <input type="datetime-local" name="Checkout" id="checkout" required>
 
-    <div class="row">
-        <div>
-            <label>Pax</label>
-            <div class="select-wrapper">
-                <select id="pax">
-                    <option value="1">1 Pax</option>
-                    <option value="2" selected>2 Pax</option>
-                    <option value="3">3 Pax</option>
-                    <option value="4">4 Pax</option>
-                    <option value="5">5 Pax</option>
-                    <option value="6">6 Pax</option>
-                </select>
+        <div class="row">
+            <div>
+                <label>Pax</label>
+                <div class="select-wrapper">
+                    <select name="Pax" id="pax">
+                        <option value="1 Pax">1 Pax</option>
+                        <option value="2 Pax" selected>2 Pax</option>
+                        <option value="3 Pax">3 Pax</option>
+                        <option value="4 Pax">4 Pax</option>
+                        <option value="5 Pax">5 Pax</option>
+                        <option value="6 Pax">6 Pax</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label>Plan</label>
+                <div class="select-wrapper">
+                    <select name="Plan" id="plan">
+                        <option value="EP Plan">EP Plan</option>
+                        <option value="CP Plan">CP Plan</option>
+                        <option value="MAP Plan">MAP Plan</option>
+                        <option value="AP Plan">AP Plan</option>
+                    </select>
+                </div>
             </div>
         </div>
-        <div>
-            <label>Plan</label>
-            <div class="select-wrapper">
-                <select id="plan">
-                    <option value="EP">EP Plan</option>
-                    <option value="CP">CP Plan</option>
-                    <option value="MAP">MAP Plan</option>
-                    <option value="AP">AP Plan</option>
-                </select>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div>
-            <label>Status</label>
-            <div class="select-wrapper">
-                <select id="paymentStatus" onchange="toggleColor(this)">
-                    <option value="Pending" style="color:#ff6b6b">Pending</option>
-                    <option value="Received" selected style="color:#1dd1a1">Received</option>
-                </select>
+        <div class="row">
+            <div>
+                <label>Status</label>
+                <div class="select-wrapper">
+                    <select name="Status" id="paymentStatus" onchange="toggleColor(this)">
+                        <option value="Pending" style="color:#ff6b6b">Pending</option>
+                        <option value="Received" selected style="color:#1dd1a1">Received</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label>Mode</label>
+                <div class="select-wrapper">
+                    <select name="Mode" id="paymentMode">
+                        <option value="UPI">UPI</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Online">Online</option>
+                        <option value="Card">Card</option>
+                    </select>
+                </div>
             </div>
         </div>
-        <div>
-            <label>Mode</label>
-            <div class="select-wrapper">
-                <select id="paymentMode">
-                    <option value="UPI">UPI</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Online">Online</option>
-                    <option value="Card">Card</option>
-                </select>
-            </div>
-        </div>
-    </div>
 
-    <button class="btn" id="sendBtn">
-        <span>Send Update</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-    </button>
+        <button type="submit" class="btn">
+            <span>Save & Send</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+    </form>
 </div>
 
 <script>
-    // 1. Default Date Setup
+    // ---------------------------------------------------------
+    // 🔴 PASTE YOUR GOOGLE DEPLOYMENT URL HERE BETWEEN QUOTES
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwo-_y6yGhAcOSyL0xwB3Z8Xhr44cjt6Sm5R2MVr0y5_U78uNdzQZ7wLBFa9oruK-kSvA/exec'; 
+    // ---------------------------------------------------------
+
+    const form = document.forms['submit-to-google-sheet'];
+    const loading = document.getElementById('loading');
+
+    // 1. Date Setup
     window.addEventListener('DOMContentLoaded', () => {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -273,44 +219,60 @@
         document.getElementById('checkout').value = localISOTime;
     });
 
-    // 2. Color Change for Status
+    // 2. Color Toggle
     function toggleColor(select) {
         if(select.value === 'Pending') select.style.color = '#ff6b6b'; 
         else select.style.color = '#1dd1a1';
     }
 
-    // 3. Send Message Logic
-    document.getElementById('sendBtn').addEventListener('click', function() {
-        if (navigator.vibrate) navigator.vibrate(50);
-
-        const room = document.getElementById('room').value;
-        const checkoutRaw = document.getElementById('checkout').value;
-        const pax = document.getElementById('pax').value; // e.g. "2 Pax"
-        const plan = document.getElementById('plan').value; // e.g. "EP Plan"
-        const pStatus = document.getElementById('paymentStatus').value;
-        const pMode = document.getElementById('paymentMode').value;
-
-        // Validation
-        if(!room) {
-            document.getElementById('room').classList.add('error-shake');
-            setTimeout(() => document.getElementById('room').classList.remove('error-shake'), 500);
+    // 3. Main Submission Logic
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        // Simple Validation
+        if(!document.getElementById('room').value) {
+            alert("Please select a room!");
             return;
         }
 
-        // Format Time 12-hour (e.g. 10:30 AM)
-        const dateObj = new Date(checkoutRaw);
-        const timeStr = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+        // Show Loading
+        loading.style.display = 'flex';
 
-        // Build the EXACT Simple Message (No emojis, no bolding)
-        const message = 
+        // A. Send to Google Sheets
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => {
+                loading.style.display = 'none';
+                
+                // B. Construct WhatsApp Message (Original Simple Format)
+                const room = document.getElementById('room').value;
+                const checkoutRaw = document.getElementById('checkout').value;
+                const pax = document.getElementById('pax').value;
+                const plan = document.getElementById('plan').value;
+                const pStatus = document.getElementById('paymentStatus').value;
+                const pMode = document.getElementById('paymentMode').value;
+
+                const dateObj = new Date(checkoutRaw);
+                const timeStr = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+                const message = 
 `${room} Checked In
 Checkout ${timeStr}
 ${pax}
 ${plan}
 Payment ${pStatus} ${pMode}`;
 
-        const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
+                // C. Open WhatsApp
+                const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                window.open(url, '_blank');
+
+                // Optional: Reset form?
+                // form.reset(); 
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                alert('Error saving to Excel! Check your internet connection.');
+                console.error('Error!', error.message);
+            });
     });
 </script>
 
