@@ -2,145 +2,223 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Check-In</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Check-In Pro</title>
     <style>
+        :root {
+            --bg-color: #000000;
+            --card-color: #1C1C1E;
+            --input-bg: #2C2C2E;
+            --text-color: #FFFFFF;
+            --label-color: #8E8E93;
+            --accent-color: #30D158; /* iOS Green */
+            --border-color: #3A3A3C;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f2f2f7;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             padding: 20px;
             margin: 0;
+            -webkit-font-smoothing: antialiased;
         }
+
         .container {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             max-width: 400px;
             margin: 0 auto;
         }
-        h2 { text-align: center; color: #333; margin-top: 0; }
-        label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; color: #555; }
+
+        h2 { 
+            text-align: center; 
+            color: var(--text-color); 
+            font-weight: 700;
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+        }
+
+        label { 
+            display: block; 
+            margin-top: 20px; 
+            font-weight: 600; 
+            font-size: 13px; 
+            color: var(--label-color); 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         input, select {
             width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px; 
-            box-sizing: border-box;
-            background-color: #fff;
-        }
-        /* Make the Room Select standout */
-        #room {
-            font-weight: bold;
-            color: #000;
-            border-color: #007AFF;
-        }
-        .btn {
-            background-color: #25D366; 
-            color: white;
-            border: none;
             padding: 16px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 25px;
-            cursor: pointer;
+            margin-top: 8px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 17px; /* 17px prevents iOS zoom */
+            box-sizing: border-box;
+            outline: none;
+            appearance: none; /* Removes default OS styling */
+            -webkit-appearance: none;
         }
-        .btn:active { opacity: 0.8; transform: scale(0.98); }
+
+        /* Custom Arrow for Selects */
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 12px;
+            color: var(--label-color);
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-30%);
+            pointer-events: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-color);
+        }
+
+        /* Highlight the Room Select */
+        #room {
+            background-color: #1C1C1E;
+            border: 1px solid #0A84FF; /* iOS Blue border for importance */
+            font-weight: 600;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: #000; /* Black text on green button for contrast */
+            border: none;
+            padding: 18px;
+            width: 100%;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(48, 209, 88, 0.3);
+            transition: transform 0.1s;
+        }
+
+        .btn:active { 
+            transform: scale(0.96); 
+            opacity: 0.9;
+        }
+
+        /* Date Input Specifics */
+        input[type="datetime-local"] {
+            color: var(--text-color);
+            font-family: inherit;
+        }
+        
+        /* Dark Scrollbar for desktop testing */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: var(--card-color); border-radius: 4px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🏨 Quick Check-In</h2>
+    <h2>🏨 Check-In</h2>
 
     <label>Select Room</label>
-    <select id="room">
-        <option value="" disabled selected>-- Select Room --</option>
-        
-        <optgroup label="S Series">
-            <option value="S1">S1</option>
-            <option value="S2">S2</option>
-            <option value="S3">S3</option>
-            <option value="S4">S4</option>
-            <option value="S5">S5</option>
-            <option value="S6">S6</option>
-            <option value="S7">S7</option>
-            <option value="S8">S8</option>
-            <option value="S9">S9</option>
-        </optgroup>
+    <div class="select-wrapper">
+        <select id="room">
+            <option value="" disabled selected>Tap to select...</option>
+            
+            <optgroup label="S Series">
+                <option value="S1">S1</option>
+                <option value="S2">S2</option>
+                <option value="S3">S3</option>
+                <option value="S4">S4</option>
+                <option value="S5">S5</option>
+                <option value="S6">S6</option>
+                <option value="S7">S7</option>
+                <option value="S8">S8</option>
+                <option value="S9">S9</option>
+            </optgroup>
 
-        <optgroup label="D Series">
-            <option value="D1">D1</option>
-            <option value="D2">D2</option>
-            <option value="D3">D3</option>
-            <option value="D4">D4</option>
-        </optgroup>
+            <optgroup label="D Series">
+                <option value="D1">D1</option>
+                <option value="D2">D2</option>
+                <option value="D3">D3</option>
+                <option value="D4">D4</option>
+            </optgroup>
 
-        <optgroup label="C Series">
-            <option value="C1">C1</option>
-            <option value="C2">C2</option>
-            <option value="C3">C3</option>
-            <option value="C4">C4</option>
-            <option value="C5">C5</option>
-            <option value="C6">C6</option>
-            <option value="C7">C7</option>
-            <option value="C8">C8</option>
-            <option value="C9">C9</option>
-        </optgroup>
+            <optgroup label="C Series">
+                <option value="C1">C1</option>
+                <option value="C2">C2</option>
+                <option value="C3">C3</option>
+                <option value="C4">C4</option>
+                <option value="C5">C5</option>
+                <option value="C6">C6</option>
+                <option value="C7">C7</option>
+                <option value="C8">C8</option>
+                <option value="C9">C9</option>
+            </optgroup>
 
-        <optgroup label="1st Floor">
-            <option value="101">101</option>
-            <option value="102">102</option>
-            <option value="103">103</option>
-            <option value="104">104</option>
-        </optgroup>
+            <optgroup label="1st Floor">
+                <option value="101">101</option>
+                <option value="102">102</option>
+                <option value="103">103</option>
+                <option value="104">104</option>
+            </optgroup>
 
-        <optgroup label="2nd Floor">
-            <option value="201">201</option>
-            <option value="202">202</option>
-            <option value="203">203</option>
-            <option value="204">204</option>
-        </optgroup>
-    </select>
+            <optgroup label="2nd Floor">
+                <option value="201">201</option>
+                <option value="202">202</option>
+                <option value="203">203</option>
+                <option value="204">204</option>
+            </optgroup>
+        </select>
+    </div>
 
     <label>Checkout Date & Time</label>
     <input type="datetime-local" id="checkout">
 
     <label>Pax</label>
-    <select id="pax">
-        <option value="1">1 Pax</option>
-        <option value="2" selected>2 Pax</option>
-        <option value="3">3 Pax</option>
-        <option value="4">4 Pax</option>
-        <option value="5">5 Pax</option>
-        <option value="6">6 Pax</option>
-    </select>
+    <div class="select-wrapper">
+        <select id="pax">
+            <option value="1">1 Pax</option>
+            <option value="2" selected>2 Pax</option>
+            <option value="3">3 Pax</option>
+            <option value="4">4 Pax</option>
+            <option value="5">5 Pax</option>
+            <option value="6">6 Pax</option>
+        </select>
+    </div>
 
     <label>Meal Plan</label>
-    <select id="plan">
-        <option value="EP">EP (Room Only)</option>
-        <option value="CP">CP (Breakfast)</option>
-        <option value="MAP">MAP (Breakfast + 1 Meal)</option>
-        <option value="AP">AP (All Meals)</option>
-    </select>
+    <div class="select-wrapper">
+        <select id="plan">
+            <option value="EP">EP (Room Only)</option>
+            <option value="CP">CP (Breakfast)</option>
+            <option value="MAP">MAP (Breakfast + 1 Meal)</option>
+            <option value="AP">AP (All Meals)</option>
+        </select>
+    </div>
 
     <label>Payment Status</label>
-    <select id="paymentStatus">
-        <option value="Pending">Pending ❌</option>
-        <option value="Received">Received ✅</option>
-    </select>
+    <div class="select-wrapper">
+        <select id="paymentStatus">
+            <option value="Pending">Pending ❌</option>
+            <option value="Received">Received ✅</option>
+        </select>
+    </div>
 
     <label>Payment Mode</label>
-    <select id="paymentMode">
-        <option value="UPI">UPI</option>
-        <option value="Cash">Cash</option>
-        <option value="Card">Card</option>
-        <option value="Online">Online/OTA</option>
-    </select>
+    <div class="select-wrapper">
+        <select id="paymentMode">
+            <option value="UPI">UPI</option>
+            <option value="Cash">Cash</option>
+            <option value="Card">Card</option>
+            <option value="Online">Online/OTA</option>
+        </select>
+    </div>
 
     <button class="btn" onclick="sendToWhatsapp()">Send to Group 🚀</button>
 </div>
@@ -171,7 +249,10 @@
         const pMode = document.getElementById('paymentMode').value;
 
         // Validation
-        if(!room) { alert("Please select a Room!"); return; }
+        if(!room) { 
+            alert("Please select a Room!"); 
+            return; 
+        }
 
         // Format Date nicely
         const dateObj = new Date(checkoutRaw);
