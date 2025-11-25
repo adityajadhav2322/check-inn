@@ -202,8 +202,8 @@
 
 <script>
     // ---------------------------------------------------------
-    // 🔴 PASTE YOUR GOOGLE DEPLOYMENT URL HERE BETWEEN QUOTES
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwo-_y6yGhAcOSyL0xwB3Z8Xhr44cjt6Sm5R2MVr0y5_U78uNdzQZ7wLBFa9oruK-kSvA/exec'; 
+    // 🔴 PASTE YOUR GOOGLE DEPLOYMENT URL HERE
+    const scriptURL = 'YOUR_GOOGLE_SCRIPT_URL_HERE'; 
     // ---------------------------------------------------------
 
     const form = document.forms['submit-to-google-sheet'];
@@ -235,43 +235,46 @@
             return;
         }
 
-        // Show Loading
-        loading.style.display = 'flex';
+        // --- STEP A: PREPARE DATA ---
+        const room = document.getElementById('room').value;
+        const checkoutRaw = document.getElementById('checkout').value;
+        const pax = document.getElementById('pax').value;
+        const plan = document.getElementById('plan').value;
+        const pStatus = document.getElementById('paymentStatus').value;
+        const pMode = document.getElementById('paymentMode').value;
+        const guestName = document.getElementById('guestName').value; // Needed for Excel
 
-        // A. Send to Google Sheets
-        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-            .then(response => {
-                loading.style.display = 'none';
-                
-                // B. Construct WhatsApp Message (Original Simple Format)
-                const room = document.getElementById('room').value;
-                const checkoutRaw = document.getElementById('checkout').value;
-                const pax = document.getElementById('pax').value;
-                const plan = document.getElementById('plan').value;
-                const pStatus = document.getElementById('paymentStatus').value;
-                const pMode = document.getElementById('paymentMode').value;
+        const dateObj = new Date(checkoutRaw);
+        const timeStr = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
 
-                const dateObj = new Date(checkoutRaw);
-                const timeStr = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
-
-                const message = 
+        // --- STEP B: OPEN WHATSAPP IMMEDIATELY (Fixes iPhone Issue) ---
+        // We do this BEFORE sending data to Google so iOS doesn't block it.
+        const message = 
 `${room} Checked In
 Checkout ${timeStr}
 ${pax}
 ${plan}
 Payment ${pStatus} ${pMode}`;
 
-                // C. Open WhatsApp
-                const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
-                window.open(url, '_blank');
+        // Force open immediately
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
 
-                // Optional: Reset form?
-                // form.reset(); 
+        // --- STEP C: SAVE TO GOOGLE SHEETS IN BACKGROUND ---
+        loading.style.display = 'flex'; // Show loading spinner locally
+        
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => {
+                loading.style.display = 'none';
+                console.log('Success!', response);
+                // Optional: Alert success or clear form here if you want
+                // alert("Saved to Database!");
+                // form.reset();
             })
             .catch(error => {
                 loading.style.display = 'none';
-                alert('Error saving to Excel! Check your internet connection.');
                 console.error('Error!', error.message);
+                // We don't alert the user here because they are likely already in WhatsApp
             });
     });
 </script>
