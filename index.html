@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Check-In</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f2f2f7;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; color: #555; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px; 
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        /* Make the Room Select standout */
+        #room {
+            font-weight: bold;
+            color: #000;
+            border-color: #007AFF;
+        }
+        .btn {
+            background-color: #25D366; 
+            color: white;
+            border: none;
+            padding: 16px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 25px;
+            cursor: pointer;
+        }
+        .btn:active { opacity: 0.8; transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🏨 Quick Check-In</h2>
+
+    <label>Select Room</label>
+    <select id="room">
+        <option value="" disabled selected>-- Select Room --</option>
+        
+        <optgroup label="S Series">
+            <option value="S1">S1</option>
+            <option value="S2">S2</option>
+            <option value="S3">S3</option>
+            <option value="S4">S4</option>
+            <option value="S5">S5</option>
+            <option value="S6">S6</option>
+            <option value="S7">S7</option>
+            <option value="S8">S8</option>
+            <option value="S9">S9</option>
+        </optgroup>
+
+        <optgroup label="D Series">
+            <option value="D1">D1</option>
+            <option value="D2">D2</option>
+            <option value="D3">D3</option>
+            <option value="D4">D4</option>
+        </optgroup>
+
+        <optgroup label="C Series">
+            <option value="C1">C1</option>
+            <option value="C2">C2</option>
+            <option value="C3">C3</option>
+            <option value="C4">C4</option>
+            <option value="C5">C5</option>
+            <option value="C6">C6</option>
+            <option value="C7">C7</option>
+            <option value="C8">C8</option>
+            <option value="C9">C9</option>
+        </optgroup>
+
+        <optgroup label="1st Floor">
+            <option value="101">101</option>
+            <option value="102">102</option>
+            <option value="103">103</option>
+            <option value="104">104</option>
+        </optgroup>
+
+        <optgroup label="2nd Floor">
+            <option value="201">201</option>
+            <option value="202">202</option>
+            <option value="203">203</option>
+            <option value="204">204</option>
+        </optgroup>
+    </select>
+
+    <label>Checkout Date & Time</label>
+    <input type="datetime-local" id="checkout">
+
+    <label>Pax</label>
+    <select id="pax">
+        <option value="1">1 Pax</option>
+        <option value="2" selected>2 Pax</option>
+        <option value="3">3 Pax</option>
+        <option value="4">4 Pax</option>
+        <option value="5">5 Pax</option>
+        <option value="6">6 Pax</option>
+    </select>
+
+    <label>Meal Plan</label>
+    <select id="plan">
+        <option value="EP">EP (Room Only)</option>
+        <option value="CP">CP (Breakfast)</option>
+        <option value="MAP">MAP (Breakfast + 1 Meal)</option>
+        <option value="AP">AP (All Meals)</option>
+    </select>
+
+    <label>Payment Status</label>
+    <select id="paymentStatus">
+        <option value="Pending">Pending ❌</option>
+        <option value="Received">Received ✅</option>
+    </select>
+
+    <label>Payment Mode</label>
+    <select id="paymentMode">
+        <option value="UPI">UPI</option>
+        <option value="Cash">Cash</option>
+        <option value="Card">Card</option>
+        <option value="Online">Online/OTA</option>
+    </select>
+
+    <button class="btn" onclick="sendToWhatsapp()">Send to Group 🚀</button>
+</div>
+
+<script>
+    // Set default checkout to tomorrow 11:00 AM
+    window.onload = function() {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(11, 0, 0, 0); 
+        
+        const year = tomorrow.getFullYear();
+        const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const day = String(tomorrow.getDate()).padStart(2, '0');
+        const hours = String(tomorrow.getHours()).padStart(2, '0');
+        const minutes = String(tomorrow.getMinutes()).padStart(2, '0');
+        
+        document.getElementById('checkout').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    };
+
+    function sendToWhatsapp() {
+        // 1. Get Values
+        const room = document.getElementById('room').value;
+        const checkoutRaw = document.getElementById('checkout').value;
+        const pax = document.getElementById('pax').value;
+        const plan = document.getElementById('plan').value;
+        const pStatus = document.getElementById('paymentStatus').value;
+        const pMode = document.getElementById('paymentMode').value;
+
+        // Validation
+        if(!room) { alert("Please select a Room!"); return; }
+
+        // Format Date nicely
+        const dateObj = new Date(checkoutRaw);
+        const dateStr = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+        const timeStr = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+        // 2. Build the Message
+        const message = 
+`*Room Number ${room} Checked In*
+Checkout ${timeStr}, ${dateStr}
+${pax} Pax
+${plan} Plan
+Payment ${pStatus} ${pMode}`;
+
+        // 3. Open WhatsApp
+        const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    }
+</script>
+
+</body>
+</html>
