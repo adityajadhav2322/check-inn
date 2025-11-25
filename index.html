@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Check-In</title>
+    <title>Check-In Pro</title>
     <style>
         :root {
-            /* Modern Dark Theme Palette */
-            --bg-gradient: linear-gradient(135deg, #1c1c1c, #000000);
-            --card-bg: rgba(28, 28, 30, 0.95);
-            --input-bg: #2C2C2E;
-            --primary: #30D158; /* iOS Green */
+            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #6C63FF; /* Modern Blurple */
+            --primary-glow: rgba(108, 99, 255, 0.4);
             --text: #ffffff;
-            --text-secondary: #8E8E93;
-            --border: #3A3A3C;
-            --radius: 14px;
+            --text-muted: #b2bec3;
+            --input-bg: #1e1e24;
+            --radius: 16px;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg-gradient);
+            background-attachment: fixed;
             color: var(--text);
             min-height: 100vh;
             display: flex;
@@ -31,63 +32,86 @@
             padding: 20px;
         }
 
-        .container {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 25px;
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            max-width: 420px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
         }
 
         h2 {
-            text-align: center;
-            margin: 0 0 25px 0;
+            margin: 0;
             font-weight: 700;
+            font-size: 24px;
+            background: linear-gradient(to right, #fff, #a5a5a5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-weight: 500;
         }
 
         label {
             display: block;
-            margin: 15px 0 8px;
+            margin: 15px 0 6px;
             font-size: 12px;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
+
+        .input-group { position: relative; }
 
         input, select {
             width: 100%;
-            padding: 14px;
+            padding: 14px 16px;
             background: var(--input-bg);
             border: 1px solid transparent;
             border-radius: var(--radius);
-            color: white;
-            font-size: 17px; /* Prevents zoom on iOS */
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.2s ease;
             outline: none;
             appearance: none;
         }
 
         input:focus, select:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.15);
+            background: #25252b;
         }
 
-        /* Custom Select Arrow */
         .select-wrapper { position: relative; }
         .select-wrapper::after {
-            content: '▼';
-            font-size: 10px;
-            color: var(--text-secondary);
+            content: '';
             position: absolute;
-            right: 15px;
+            right: 16px;
             top: 50%;
+            width: 10px;
+            height: 6px;
+            background-color: var(--text-muted);
+            clip-path: polygon(100% 0%, 0 0%, 50% 100%);
             transform: translateY(-50%);
             pointer-events: none;
         }
 
-        /* Two Column Layout for smaller fields */
         .row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -96,7 +120,7 @@
 
         .btn {
             background: var(--primary);
-            color: #000;
+            color: white;
             border: none;
             width: 100%;
             padding: 16px;
@@ -105,33 +129,81 @@
             font-weight: 700;
             margin-top: 30px;
             cursor: pointer;
-            transition: opacity 0.2s;
+            box-shadow: 0 8px 20px var(--primary-glow);
+            transition: transform 0.1s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .btn:active { opacity: 0.8; transform: scale(0.98); }
+        .btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
 
-        /* Highlight Room Select */
-        #room { border: 1px solid #3A3A3C; font-weight: 600; }
+        .btn svg { width: 20px; height: 20px; }
+
+        option { background: #1e1e24; color: white; }
+        
+        .error-shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+            border-color: #ff4757 !important;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Check-In</h2>
+<div class="card">
+    <header>
+        <h2>Check-In Pro</h2>
+        <div class="subtitle">Quick Guest Registration</div>
+    </header>
 
-    <label>Select Room</label>
+    <label>Guest Name</label>
+    <div class="input-group">
+        <input type="text" id="guestName" placeholder="e.g. Mr. Sharma" autocomplete="off">
+    </div>
+
+    <label>Room Allocation</label>
     <div class="select-wrapper">
         <select id="room">
-            <option value="" disabled selected>Tap to select...</option>
-            <optgroup label="S Series"><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="S4">S4</option><option value="S5">S5</option><option value="S6">S6</option><option value="S7">S7</option><option value="S8">S8</option><option value="S9">S9</option></optgroup>
-            <optgroup label="D Series"><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option></optgroup>
-            <optgroup label="C Series"><option value="C1">C1</option><option value="C2">C2</option><option value="C3">C3</option><option value="C4">C4</option><option value="C5">C5</option><option value="C6">C6</option><option value="C7">C7</option><option value="C8">C8</option><option value="C9">C9</option></optgroup>
-            <optgroup label="1st Floor"><option value="101">101</option><option value="102">102</option><option value="103">103</option><option value="104">104</option></optgroup>
-            <optgroup label="2nd Floor"><option value="201">201</option><option value="202">202</option><option value="203">203</option><option value="204">204</option></optgroup>
+            <option value="" disabled selected>Select Room</option>
+            <optgroup label="S Series (Ground)">
+                <option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option>
+                <option value="S4">S4</option><option value="S5">S5</option><option value="S6">S6</option>
+                <option value="S7">S7</option><option value="S8">S8</option><option value="S9">S9</option>
+            </optgroup>
+            <optgroup label="D Series">
+                <option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="D4">D4</option>
+            </optgroup>
+            <optgroup label="C Series">
+                <option value="C1">C1</option><option value="C2">C2</option><option value="C3">C3</option>
+                <option value="C4">C4</option><option value="C5">C5</option><option value="C6">C6</option>
+                <option value="C7">C7</option><option value="C8">C8</option><option value="C9">C9</option>
+            </optgroup>
+            <optgroup label="1st Floor">
+                <option value="101">101</option><option value="102">102</option><option value="103">103</option><option value="104">104</option>
+            </optgroup>
+            <optgroup label="2nd Floor">
+                <option value="201">201</option><option value="202">202</option><option value="203">203</option><option value="204">204</option>
+            </optgroup>
         </select>
     </div>
 
-    <label>Checkout Time</label>
+    <label>Checkout Date & Time</label>
     <input type="datetime-local" id="checkout">
 
     <div class="row">
@@ -139,23 +211,23 @@
             <label>Pax</label>
             <div class="select-wrapper">
                 <select id="pax">
-                    <option value="1">1</option>
-                    <option value="2" selected>2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
+                    <option value="1">1 Pax</option>
+                    <option value="2" selected>2 Pax</option>
+                    <option value="3">3 Pax</option>
+                    <option value="4">4 Pax</option>
+                    <option value="5">5 Pax</option>
+                    <option value="6">6 Pax</option>
                 </select>
             </div>
         </div>
         <div>
-            <label>Meal Plan</label>
+            <label>Plan</label>
             <div class="select-wrapper">
                 <select id="plan">
-                    <option value="EP">EP</option>
-                    <option value="CP">CP</option>
-                    <option value="MAP">MAP</option>
-                    <option value="AP">AP</option>
+                    <option value="EP">EP Plan</option>
+                    <option value="CP">CP Plan</option>
+                    <option value="MAP">MAP Plan</option>
+                    <option value="AP">AP Plan</option>
                 </select>
             </div>
         </div>
@@ -165,62 +237,81 @@
         <div>
             <label>Status</label>
             <div class="select-wrapper">
-                <select id="paymentStatus">
-                    <option value="Received">Received</option>
-                    <option value="Pending">Pending</option>
+                <select id="paymentStatus" onchange="toggleColor(this)">
+                    <option value="Pending" style="color:#ff6b6b">Pending</option>
+                    <option value="Received" selected style="color:#1dd1a1">Received</option>
                 </select>
             </div>
         </div>
         <div>
-            <label>Mode/Bank</label>
-            <input type="text" id="paymentMode" placeholder="e.g. Online ICICI" value="Online">
+            <label>Mode</label>
+            <div class="select-wrapper">
+                <select id="paymentMode">
+                    <option value="UPI">UPI</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Online">Online</option>
+                    <option value="Card">Card</option>
+                </select>
+            </div>
         </div>
     </div>
 
-    <button class="btn" onclick="sendWhatsapp()">Send Message</button>
+    <button class="btn" id="sendBtn">
+        <span>Send Update</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </button>
 </div>
 
 <script>
-    // Set default checkout to tomorrow 11:00 AM
-    window.onload = function() {
+    // 1. Default Date Setup
+    window.addEventListener('DOMContentLoaded', () => {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(11, 0, 0, 0); 
-        
-        // Handle timezone offset for local input
         const offset = tomorrow.getTimezoneOffset() * 60000;
         const localISOTime = new Date(tomorrow - offset).toISOString().slice(0, 16);
         document.getElementById('checkout').value = localISOTime;
-    };
+    });
 
-    function sendWhatsapp() {
-        // 1. Get Values
+    // 2. Color Change for Status
+    function toggleColor(select) {
+        if(select.value === 'Pending') select.style.color = '#ff6b6b'; 
+        else select.style.color = '#1dd1a1';
+    }
+
+    // 3. Send Message Logic
+    document.getElementById('sendBtn').addEventListener('click', function() {
+        if (navigator.vibrate) navigator.vibrate(50);
+
         const room = document.getElementById('room').value;
         const checkoutRaw = document.getElementById('checkout').value;
-        const pax = document.getElementById('pax').value;
-        const plan = document.getElementById('plan').value;
+        const pax = document.getElementById('pax').value; // e.g. "2 Pax"
+        const plan = document.getElementById('plan').value; // e.g. "EP Plan"
         const pStatus = document.getElementById('paymentStatus').value;
-        const pMode = document.getElementById('paymentMode').value; // Free text input now
+        const pMode = document.getElementById('paymentMode').value;
 
-        if(!room) { alert("Select a Room"); return; }
+        // Validation
+        if(!room) {
+            document.getElementById('room').classList.add('error-shake');
+            setTimeout(() => document.getElementById('room').classList.remove('error-shake'), 500);
+            return;
+        }
 
-        // 2. Format Date (Short and clean)
+        // Format Time 12-hour (e.g. 10:30 AM)
         const dateObj = new Date(checkoutRaw);
         const timeStr = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
-        
-        // 3. Construct Message (EXACTLY matching your screenshot format)
-        // Note: I added a newline (\n) for each line break.
+
+        // Build the EXACT Simple Message (No emojis, no bolding)
         const message = 
 `${room} Checked In
 Checkout ${timeStr}
-${pax} Pax
-${plan} Plan
+${pax}
+${plan}
 Payment ${pStatus} ${pMode}`;
 
-        // 4. Send
         const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
-    }
+    });
 </script>
 
 </body>
