@@ -49,7 +49,6 @@
             margin-top: 20px; cursor: pointer;
         }
         
-        /* The Invisible Engine */
         iframe { display: none; }
     </style>
 </head>
@@ -110,14 +109,12 @@
 
 <script>
     // --------------------------------------------------------------------
-    // 🔴 PASTE YOUR GOOGLE SCRIPT URL HERE
-    const googleUrl = 'https://script.google.com/macros/s/AKfycbwo-_y6yGhAcOSyL0xwB3Z8Xhr44cjt6Sm5R2MVr0y5_U78uNdzQZ7wLBFa9oruK-kSvA/exec';
+    // 🔴 PASTE YOUR NEW URL HERE
+    const googleUrl = 'https://script.google.com/macros/s/AKfycbyht5cab9SYbUtzMvyW5b4Dw8qypiJqgCVOeL1hk18T-3hKK037UeEcboqgc4oBDJ0QHw/exec';
     // --------------------------------------------------------------------
 
-    // Set form action dynamically
     document.getElementById('checkinForm').action = googleUrl;
 
-    // Date Setup
     window.onload = function() {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -128,13 +125,14 @@
 
     function processCheckIn() {
         const room = document.getElementById('room').value;
-        if(!room) { alert("Select a Room!"); return; }
+        const guest = document.getElementById('guestName').value;
+        
+        if(!room || !guest) { alert("Please fill details!"); return; }
 
-        // 1. Trigger the "Secret" Form Submission to Google
-        // This runs in the background targeting the iframe
+        // 1. Submit form to Iframe (Saves to Excel)
         document.getElementById('checkinForm').submit();
 
-        // 2. Prepare WhatsApp Message
+        // 2. Prepare WhatsApp
         const checkoutRaw = document.getElementById('checkout').value;
         const pax = document.getElementById('pax').value;
         const plan = document.getElementById('plan').value;
@@ -151,8 +149,7 @@ ${pax}
 ${plan}
 Payment ${pStatus} ${pMode}`;
 
-        // 3. Open WhatsApp Immediately
-        // Because the form submitted to a hidden iframe, this won't be blocked.
+        // 3. Open WhatsApp (Short delay to allow form submit to start)
         setTimeout(() => {
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
         }, 100);
