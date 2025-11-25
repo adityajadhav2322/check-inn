@@ -202,7 +202,7 @@
 
 <script>
     // ---------------------------------------------------------
-    // 🔴 PASTE YOUR GOOGLE DEPLOYMENT URL HERE
+    // 🔴 RE-PASTE YOUR LATEST GOOGLE URL HERE CAREFULLY
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwo-_y6yGhAcOSyL0xwB3Z8Xhr44cjt6Sm5R2MVr0y5_U78uNdzQZ7wLBFa9oruK-kSvA/exec'; 
     // ---------------------------------------------------------
 
@@ -219,36 +219,32 @@
         document.getElementById('checkout').value = localISOTime;
     });
 
-    // 2. Color Toggle
     function toggleColor(select) {
         if(select.value === 'Pending') select.style.color = '#ff6b6b'; 
         else select.style.color = '#1dd1a1';
     }
 
-    // 3. Main Submission Logic
     form.addEventListener('submit', e => {
         e.preventDefault();
         
-        // Simple Validation
         if(!document.getElementById('room').value) {
             alert("Please select a room!");
             return;
         }
 
-        // --- STEP A: PREPARE DATA ---
+        // --- PREPARE DATA ---
         const room = document.getElementById('room').value;
         const checkoutRaw = document.getElementById('checkout').value;
         const pax = document.getElementById('pax').value;
         const plan = document.getElementById('plan').value;
         const pStatus = document.getElementById('paymentStatus').value;
         const pMode = document.getElementById('paymentMode').value;
-        const guestName = document.getElementById('guestName').value; // Needed for Excel
-
+        
+        // Format Time for WhatsApp
         const dateObj = new Date(checkoutRaw);
         const timeStr = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
 
-        // --- STEP B: OPEN WHATSAPP IMMEDIATELY (Fixes iPhone Issue) ---
-        // We do this BEFORE sending data to Google so iOS doesn't block it.
+        // --- ACTION 1: OPEN WHATSAPP (Visual Feedback) ---
         const message = 
 `${room} Checked In
 Checkout ${timeStr}
@@ -256,26 +252,19 @@ ${pax}
 ${plan}
 Payment ${pStatus} ${pMode}`;
 
-        // Force open immediately
         const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
 
-        // --- STEP C: SAVE TO GOOGLE SHEETS IN BACKGROUND ---
-        loading.style.display = 'flex'; // Show loading spinner locally
+        // --- ACTION 2: SAVE TO GOOGLE (The Invisible Hand) ---
+        // Using 'keepalive: true' to survive the app switch on iPhone
         
-        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-            .then(response => {
-                loading.style.display = 'none';
-                console.log('Success!', response);
-                // Optional: Alert success or clear form here if you want
-                // alert("Saved to Database!");
-                // form.reset();
-            })
-            .catch(error => {
-                loading.style.display = 'none';
-                console.error('Error!', error.message);
-                // We don't alert the user here because they are likely already in WhatsApp
-            });
+        fetch(scriptURL, { 
+            method: 'POST', 
+            body: new FormData(form),
+            keepalive: true 
+        })
+        .then(response => console.log('Data sent to cloud'))
+        .catch(error => alert("Error saving to Sheet! Check permissions."));
     });
 </script>
 
