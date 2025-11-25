@@ -8,14 +8,21 @@
         :root {
             --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --primary: #6C63FF;
+            --primary-glow: rgba(108, 99, 255, 0.4);
             --text: #ffffff;
+            --text-muted: #b2bec3;
             --input-bg: #1e1e24;
+            --radius: 16px;
         }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg-gradient);
+            background-attachment: fixed;
             color: var(--text);
             min-height: 100vh;
             display: flex;
@@ -24,104 +31,214 @@
             margin: 0;
             padding: 20px;
         }
+
         .card {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 30px;
             width: 100%;
             max-width: 420px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        h2 { text-align: center; margin: 0 0 20px 0; }
-        
+
+        header { text-align: center; margin-bottom: 25px; }
+        h2 { margin: 0; font-weight: 700; font-size: 24px; background: linear-gradient(to right, #fff, #a5a5a5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+
+        label { display: block; margin: 15px 0 6px; font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+
         input, select {
-            width: 100%; padding: 14px; margin-top: 8px; margin-bottom: 15px;
-            background: var(--input-bg); border: none; border-radius: 12px;
-            color: #fff; font-size: 16px; outline: none;
+            width: 100%; padding: 14px 16px; background: var(--input-bg);
+            border: 1px solid transparent; border-radius: var(--radius);
+            color: #fff; font-size: 16px; outline: none; appearance: none;
+            transition: all 0.2s ease;
         }
-        label { font-size: 12px; text-transform: uppercase; color: #b2bec3; font-weight: bold; }
-        
+        input:focus, select:focus { border-color: var(--primary); background: #25252b; }
+
+        .select-wrapper { position: relative; }
+        .select-wrapper::after {
+            content: ''; position: absolute; right: 16px; top: 50%;
+            width: 10px; height: 6px; background-color: var(--text-muted);
+            clip-path: polygon(100% 0%, 0 0%, 50% 100%); transform: translateY(-50%); pointer-events: none;
+        }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
         .btn {
             background: var(--primary); color: white; border: none; width: 100%;
-            padding: 16px; border-radius: 12px; font-size: 17px; font-weight: 700;
-            margin-top: 20px; cursor: pointer;
+            padding: 16px; border-radius: var(--radius); font-size: 17px;
+            font-weight: 700; margin-top: 30px; cursor: pointer;
+            box-shadow: 0 8px 20px var(--primary-glow);
+            transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
+        .btn:active { transform: scale(0.97); }
+
+        option { background: #1e1e24; color: white; }
         
+        /* HIDDEN ELEMENT FOR IPHONE FIX */
         iframe { display: none; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Check-In Pro</h2>
+    <header>
+        <h2>Check-In Pro</h2>
+    </header>
 
     <iframe name="hidden_iframe" id="hidden_iframe"></iframe>
 
     <form id="checkinForm" method="POST" target="hidden_iframe">
         
         <label>Guest Name</label>
-        <input type="text" name="Guest Name" id="guestName" required>
+        <input type="text" name="Guest Name" id="guestName" placeholder="e.g. Mr. Sharma" required>
 
-        <label>Room</label>
-        <select name="Room" id="room" required>
-            <option value="" disabled selected>Select Room</option>
-            <optgroup label="S Series"><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option></optgroup>
-            <optgroup label="D Series"><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option></optgroup>
-            <optgroup label="C Series"><option value="C1">C1</option><option value="C2">C2</option><option value="C3">C3</option></optgroup>
-        </select>
+        <label>Room Category & Number</label>
+        <div class="select-wrapper">
+            <select name="Room" id="room" required>
+                <option value="" disabled selected>Select Room...</option>
+                
+                <optgroup label="Premium Deluxe Cottage">
+                    <option value="C1">C1</option>
+                    <option value="C2">C2</option>
+                    <option value="C3">C3</option>
+                    <option value="C4">C4</option>
+                    <option value="C5">C5</option>
+                </optgroup>
 
-        <label>Checkout</label>
+                <optgroup label="Dormitory">
+                    <option value="D1">D1 (10 Pax)</option>
+                    <option value="D2">D2 (10 Pax)</option>
+                </optgroup>
+
+                <optgroup label="Suit Cottage">
+                    <option value="D3">D3</option>
+                    <option value="D4">D4</option>
+                </optgroup>
+
+                <optgroup label="Standard Room">
+                    <option value="S1">S1</option>
+                    <option value="S2">S2</option>
+                    <option value="S3">S3</option>
+                    <option value="S4">S4</option>
+                </optgroup>
+
+                <optgroup label="Studio Room">
+                    <option value="S5">S5</option>
+                    <option value="S6">S6</option>
+                </optgroup>
+
+                <optgroup label="Deluxe Cottage">
+                    <option value="S7">S7</option>
+                    <option value="S8">S8</option>
+                    <option value="S9">S9</option>
+                </optgroup>
+
+                <optgroup label="Family Executive (1st Floor)">
+                    <option value="101">101</option>
+                    <option value="102">102</option>
+                    <option value="103">103</option>
+                    <option value="104">104</option>
+                </optgroup>
+
+                <optgroup label="Family Executive (2nd Floor)">
+                    <option value="201">201</option>
+                    <option value="202">202</option>
+                    <option value="203">203</option>
+                    <option value="204">204</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <label>Checkout Date & Time</label>
         <input type="datetime-local" name="Checkout" id="checkout" required>
 
-        <label>Pax</label>
-        <select name="Pax" id="pax">
-            <option value="1 Pax">1 Pax</option>
-            <option value="2 Pax" selected>2 Pax</option>
-            <option value="3 Pax">3 Pax</option>
-        </select>
+        <div class="row">
+            <div>
+                <label>Pax</label>
+                <div class="select-wrapper">
+                    <select name="Pax" id="pax">
+                        <option value="1 Pax">1 Pax</option>
+                        <option value="2 Pax" selected>2 Pax</option>
+                        <option value="3 Pax">3 Pax</option>
+                        <option value="4 Pax">4 Pax</option>
+                        <option value="5 Pax">5 Pax</option>
+                        <option value="6 Pax">6 Pax</option>
+                        <option value="7 Pax">7 Pax</option>
+                        <option value="8 Pax">8 Pax</option>
+                        <option value="9 Pax">9 Pax</option>
+                        <option value="10 Pax">10 Pax</option>
+                        <option value="11-15 Pax">11-15 Pax</option>
+                        <option value="16+ Pax">16+ Pax</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label>Plan</label>
+                <div class="select-wrapper">
+                    <select name="Plan" id="plan">
+                        <option value="EP Plan">EP Plan</option>
+                        <option value="CP Plan">CP Plan</option>
+                        <option value="MAP Plan">MAP Plan</option>
+                        <option value="AP Plan">AP Plan</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
-        <label>Plan</label>
-        <select name="Plan" id="plan">
-            <option value="EP Plan">EP Plan</option>
-            <option value="CP Plan">CP Plan</option>
-            <option value="MAP Plan">MAP Plan</option>
-            <option value="AP Plan">AP Plan</option>
-        </select>
+        <div class="row">
+            <div>
+                <label>Status</label>
+                <div class="select-wrapper">
+                    <select name="Status" id="paymentStatus" onchange="toggleColor(this)">
+                        <option value="Received" selected style="color:#1dd1a1">Received</option>
+                        <option value="Pending" style="color:#ff6b6b">Pending</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label>Mode</label>
+                <div class="select-wrapper">
+                    <select name="Mode" id="paymentMode">
+                        <option value="Online">Online</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
-        <label>Status</label>
-        <select name="Status" id="paymentStatus">
-            <option value="Received">Received</option>
-            <option value="Pending">Pending</option>
-        </select>
-
-        <label>Mode</label>
-        <select name="Mode" id="paymentMode">
-            <option value="Online">Online</option>
-            <option value="UPI">UPI</option>
-            <option value="Cash">Cash</option>
-        </select>
-
-        <button type="button" class="btn" onclick="processCheckIn()">Save & Send</button>
+        <button type="button" class="btn" onclick="processCheckIn()">
+            <span>Save & Send</span>
+        </button>
     </form>
 </div>
 
 <script>
     // --------------------------------------------------------------------
-    // 🔴 PASTE YOUR NEW URL HERE
+    // 🔴 PASTE YOUR GOOGLE SCRIPT URL HERE
     const googleUrl = 'https://script.google.com/macros/s/AKfycbyht5cab9SYbUtzMvyW5b4Dw8qypiJqgCVOeL1hk18T-3hKK037UeEcboqgc4oBDJ0QHw/exec';
     // --------------------------------------------------------------------
 
+    // Assign the URL to the form
     document.getElementById('checkinForm').action = googleUrl;
 
-    window.onload = function() {
+    // Date Logic (Default Tomorrow 11 AM)
+    window.addEventListener('DOMContentLoaded', () => {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(11, 0, 0, 0); 
         const offset = tomorrow.getTimezoneOffset() * 60000;
         document.getElementById('checkout').value = new Date(tomorrow - offset).toISOString().slice(0, 16);
-    };
+    });
+
+    function toggleColor(select) {
+        if(select.value === 'Pending') select.style.color = '#ff6b6b'; 
+        else select.style.color = '#1dd1a1';
+    }
 
     function processCheckIn() {
         const room = document.getElementById('room').value;
@@ -129,10 +246,10 @@
         
         if(!room || !guest) { alert("Please fill details!"); return; }
 
-        // 1. Submit form to Iframe (Saves to Excel)
+        // 1. Submit to Google (Hidden Iframe)
         document.getElementById('checkinForm').submit();
 
-        // 2. Prepare WhatsApp
+        // 2. Prepare WhatsApp Data
         const checkoutRaw = document.getElementById('checkout').value;
         const pax = document.getElementById('pax').value;
         const plan = document.getElementById('plan').value;
@@ -142,6 +259,7 @@
         const dateObj = new Date(checkoutRaw);
         const timeStr = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
 
+        // 3. Construct Message (EXACT Format Requested)
         const message = 
 `${room} Checked In
 Checkout ${timeStr}
@@ -149,10 +267,10 @@ ${pax}
 ${plan}
 Payment ${pStatus} ${pMode}`;
 
-        // 3. Open WhatsApp (Short delay to allow form submit to start)
+        // 4. Open WhatsApp (Short delay to ensure form submission starts)
         setTimeout(() => {
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-        }, 100);
+        }, 200);
     }
 </script>
 
